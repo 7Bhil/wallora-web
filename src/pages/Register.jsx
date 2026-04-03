@@ -1,0 +1,148 @@
+import { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { User, Mail, Lock, CheckCircle, ArrowRight } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext';
+
+export default function Register() {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) return setError('Les mots de passe ne correspondent pas.');
+    
+    try {
+      const res = await fetch('http://localhost:3000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password })
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        login(data.token, data.user);
+        navigate('/');
+      } else {
+        setError(data.error);
+      }
+    } catch {
+      setError('Erreur réseau. Le serveur API est-il lancé ?');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0d0914] bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-950 via-purple-950/20 to-black flex items-center justify-center p-4 relative overflow-hidden">
+      
+      {/* Top Header */}
+      <div className="absolute top-0 w-full p-6 flex justify-between items-center z-10">
+        <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">Wallora</h1>
+        <Link to="/" className="text-gray-400 hover:text-white flex items-center gap-2 text-sm font-medium tracking-wider transition">
+          BACK TO GALLERY <ArrowRight size={16} />
+        </Link>
+      </div>
+
+      {/* Background Decor */}
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/4 opacity-[0.03] select-none pointer-events-none">
+        <h2 className="text-[180px] font-black text-white mix-blend-overlay rotate-90 leading-none tracking-tighter">REGISTRATION</h2>
+      </div>
+
+      {/* Glass Card */}
+      <div className="w-full max-w-[420px] bg-white/[0.02] backdrop-blur-2xl border border-white/5 rounded-3xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative z-10">
+        <h2 className="text-3xl font-extrabold text-white mb-1 tracking-tight">Create Account</h2>
+        <p className="text-gray-400 mb-8 text-sm font-medium">Join the elite circle of digital curators.</p>
+
+        {error && <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-3 rounded-lg mb-6 text-sm">{error}</div>}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Username</label>
+            <div className="relative">
+              <input 
+                type="text" value={username} onChange={e => setUsername(e.target.value)} required
+                className="w-full bg-black/40 border border-white/5 rounded-xl py-3.5 pl-4 pr-10 text-white placeholder-gray-700 focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition shadow-inner"
+                placeholder="curator_name"
+              />
+              <User className="absolute right-4 top-3.5 text-gray-600" size={18} />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Email Address</label>
+            <div className="relative">
+              <input 
+                type="email" value={email} onChange={e => setEmail(e.target.value)} required
+                className="w-full bg-black/40 border border-white/5 rounded-xl py-3.5 pl-4 pr-10 text-white placeholder-gray-700 focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition shadow-inner"
+                placeholder="hello@wallora.art"
+              />
+              <Mail className="absolute right-4 top-3.5 text-gray-600" size={18} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Password</label>
+              <div className="relative">
+                <input 
+                  type="password" value={password} onChange={e => setPassword(e.target.value)} required
+                  className="w-full bg-black/40 border border-white/5 rounded-xl py-3.5 pl-4 pr-10 text-white placeholder-gray-700 focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition shadow-inner"
+                  placeholder="••••••••"
+                />
+                <Lock className="absolute right-3 top-3.5 text-gray-600" size={18} />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Confirm Password</label>
+              <div className="relative">
+                <input 
+                  type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required
+                  className="w-full bg-black/40 border border-white/5 rounded-xl py-3.5 pl-4 pr-10 text-white placeholder-gray-700 focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition shadow-inner"
+                  placeholder="••••••••"
+                />
+                <CheckCircle className="absolute right-3 top-3.5 text-gray-600" size={18} />
+              </div>
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            className="w-full bg-[#9f7aea] hover:bg-[#b073ff] text-white font-bold py-3.5 rounded-xl mt-4 transition shadow-[0_4px_14px_0_rgba(168,85,247,0.3)] hover:shadow-[0_6px_20px_rgba(168,85,247,0.5)]"
+          >
+            Create Account
+          </button>
+        </form>
+
+        <div className="relative flex items-center justify-center mt-8 mb-6">
+          <div className="absolute border-t border-white/5 w-full"></div>
+          <span className="bg-[#0d0914] px-3 text-[11px] font-bold tracking-widest text-gray-600 uppercase z-10">Or join with</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+           <button className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 py-3 rounded-xl transition text-sm font-medium text-gray-300">
+              <span className="text-lg">G</span> Google
+           </button>
+           <button className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 py-3 rounded-xl transition text-sm font-medium text-gray-300">
+              <span className="text-lg text-blue-500">f</span> Facebook
+           </button>
+        </div>
+
+        <div className="mt-8 text-center text-sm font-medium text-gray-400">
+          Already a curator? <Link to="/login" className="text-purple-400 hover:text-purple-300 font-bold ml-1">Login</Link>
+        </div>
+      </div>
+
+      <div className="absolute bottom-6 w-full px-8 flex justify-between items-center text-[10px] text-gray-600 uppercase font-bold tracking-widest">
+         <span>© 2024 Wallora. The Digital Curator.</span>
+         <div className="space-x-4">
+           <span className="hover:text-gray-400 cursor-pointer">Privacy Policy</span>
+           <span className="hover:text-gray-400 cursor-pointer">Terms of Art</span>
+         </div>
+      </div>
+    </div>
+  );
+}
