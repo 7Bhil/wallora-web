@@ -48,10 +48,10 @@ export default function MainLayout() {
            {user && (
              <div className="mb-6 p-4 rounded-2xl bg-white/5 flex items-center gap-3">
                <div className="w-10 h-10 rounded-full bg-purple-500/20 border border-purple-500/50 flex items-center justify-center">
-                 <span className="text-purple-300 font-bold uppercase">{user.username.charAt(0)}</span>
+                 <span className="text-purple-300 font-bold uppercase">{(user.username || user.email || '?').charAt(0)}</span>
                </div>
                <div>
-                  <p className="font-bold text-sm text-white">@{user.username}</p>
+                  <p className="font-bold text-sm text-white">@{user.username || user.email}</p>
                   <p className="text-xs text-gray-500">Curator</p>
                </div>
              </div>

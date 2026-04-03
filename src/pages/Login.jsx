@@ -1,11 +1,12 @@
 import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
@@ -74,11 +75,13 @@ export default function Login() {
             </div>
             <div className="relative">
               <input 
-                type="password" value={password} onChange={e => setPassword(e.target.value)} required
+                type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} required
                 className="w-full bg-black/40 border border-white/5 rounded-xl py-3.5 pl-4 pr-10 text-white placeholder-gray-700 focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition shadow-inner"
                 placeholder="••••••••"
               />
-              <Lock className="absolute right-3 top-3.5 text-gray-600" size={18} />
+              <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute right-3 top-3.5 text-gray-600 hover:text-gray-400 transition">
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
