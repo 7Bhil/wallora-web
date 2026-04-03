@@ -1,12 +1,31 @@
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { Verified, Play, Plus } from 'lucide-react';
+import { Verified, Play, Plus, Trash2 } from 'lucide-react';
 
 export default function Profile() {
   const { token, user } = useContext(AuthContext);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [wallpapers, setWallpapers] = useState([]);
+
+  const deleteWallpaper = async (id) => {
+    if (!window.confirm('Supprimer ce wallpaper définitivement ?')) return;
+    try {
+      const res = await fetch(`http://localhost:3000/api/wallpapers/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setWallpapers(prev => prev.filter(wp => wp._id !== id));
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Erreur lors de la suppression.');
+      }
+    } catch {
+      alert('Erreur réseau.');
+    }
+  };
 
   useEffect(() => {
     fetch('http://localhost:3000/api/users/profile', {
@@ -15,6 +34,7 @@ export default function Profile() {
     .then(res => res.json())
     .then(data => {
        setProfile(data);
+       setWallpapers(data.wallpapers || []);
        setLoading(false);
     })
     .catch(() => setLoading(false));
@@ -23,7 +43,7 @@ export default function Profile() {
   if (loading) return <div className="p-10 text-gray-400">Loading Profile...</div>;
   if (!profile || !profile.user) return <div className="p-10 text-red-400">Failed to load profile. Ensure the backend server is running.</div>;
 
-  const { stats, wallpapers } = profile;
+  const { stats } = profile;
 
   return (
     <div className="p-8 md:p-12 max-w-6xl mx-auto">
@@ -100,6 +120,15 @@ export default function Profile() {
                       RANK #{index + 1}
                    </span>
                 </div>
+
+                {/* Delete button — visible on hover */}
+                <button
+                  onClick={() => deleteWallpaper(wp._id)}
+                  className="absolute top-4 right-4 w-9 h-9 rounded-full bg-red-500/0 hover:bg-red-500/80 border border-white/0 hover:border-red-400 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 backdrop-blur-md"
+                  title="Supprimer"
+                >
+                  <Trash2 size={14} className="text-red-300" />
+                </button>
                 
                 <div className="absolute bottom-4 w-full px-4 flex justify-between items-end">
                    <div className="flex-1">

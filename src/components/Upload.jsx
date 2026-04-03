@@ -59,14 +59,14 @@ export default function Upload() {
       setProgress(100);
       if (res.ok) {
         setStatus('success');
-        setMessage('Your masterpiece has been published to the Arena!');
+        setMessage('Ton chef-d\'œuvre a été publié dans l\'Arène !');
         setFile(null); setPreview(null); setTitle(''); setTags(['#Neon', '#Vaporwave', '#Dark']);
       } else {
         const err = await res.json();
-        setStatus('error'); setMessage(err.error || 'Upload failed.');
+        setStatus('error'); setMessage(err.error || 'Erreur lors de l\'upload.');
       }
     } catch {
-      setStatus('error'); setMessage('Network error. Is the server running?');
+      setStatus('error'); setMessage('Erreur réseau. Le serveur est-il démarré ?');
     }
     setUploading(false); setProgress(0);
   };

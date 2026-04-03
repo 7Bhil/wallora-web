@@ -1,12 +1,18 @@
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Swords, LayoutGrid, Trophy, Palette, Sparkles, HelpCircle, LogOut } from 'lucide-react';
+import { Swords, LayoutGrid, Trophy, Palette, Sparkles, HelpCircle, LogOut, Menu, X } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
 export default function MainLayout() {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const handleLogout = () => {
     logout();
@@ -23,8 +29,27 @@ export default function MainLayout() {
 
   return (
     <div className="flex min-h-screen bg-[#0d0914] text-white font-sans overflow-hidden">
+      
+      {/* Mobile Top Header */}
+      <div className="md:hidden fixed top-0 w-full h-16 bg-[#0a0710]/90 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 z-50">
+        <Link to="/" className="flex items-baseline gap-1">
+          <h1 className="text-xl font-bold text-white tracking-tight italic">Wallora</h1>
+        </Link>
+        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-300 hover:text-white p-2">
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Sidebar Overlay (Mobile) */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-[280px] flex-shrink-0 border-r border-white/5 bg-[#0a0710] flex flex-col justify-between hidden md:flex sticky top-0 h-screen">
+      <aside className={`w-[280px] flex-shrink-0 border-r border-white/5 bg-[#0a0710] flex flex-col justify-between fixed md:sticky top-0 h-screen z-50 transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="p-8">
           <Link to="/" className="block mb-12">
             <h1 className="text-2xl font-bold text-white tracking-tight italic">Wallora</h1>
@@ -76,7 +101,7 @@ export default function MainLayout() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto relative h-screen">
+      <main className="flex-1 overflow-y-auto relative h-screen pt-16 md:pt-0">
         <Outlet />
       </main>
     </div>
