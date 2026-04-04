@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
+import Download from './pages/Download';
 import MainLayout from './layouts/MainLayout';
 import Battle from './components/Battle';
 import Leaderboard from './components/Leaderboard';
@@ -37,7 +38,7 @@ function AppRoutes() {
           <Route path="upload" element={<Upload />} />
           <Route path="profile" element={<Profile />} />
           {/* Placeholder pages for sidebar links */}
-          <Route path="artists" element={<ComingSoon name="Artists" />} />
+          <Route path="download" element={<Download />} />
           <Route path="vault" element={<ComingSoon name="Vault" />} />
         </Route>
       </Routes>

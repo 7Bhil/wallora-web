@@ -25,9 +25,9 @@ export default function MainLayout() {
 
   const navItems = [
     { name: 'Arena', path: '/', icon: Swords },
-    { name: 'Gallery', path: '/profile', icon: LayoutGrid },
+    { name: 'Profile', path: '/profile', icon: LayoutGrid },
     { name: 'Ranking', path: '/leaderboard', icon: Trophy },
-    { name: 'Artists', path: '/artists', icon: Palette },
+    { name: 'Download', path: '/download', icon: Palette },
   ];
 
   return (
