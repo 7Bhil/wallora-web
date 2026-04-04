@@ -28,7 +28,6 @@ export default function MainLayout() {
     { name: 'Gallery', path: '/profile', icon: LayoutGrid },
     { name: 'Ranking', path: '/leaderboard', icon: Trophy },
     { name: 'Artists', path: '/artists', icon: Palette },
-    { name: 'Vault', path: '/vault', icon: Sparkles },
   ];
 
   return (
