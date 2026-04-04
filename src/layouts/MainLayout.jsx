@@ -4,12 +4,16 @@ import { Swords, LayoutGrid, Trophy, Palette, Sparkles, HelpCircle, LogOut, Menu
 import { AuthContext } from '../context/AuthContext';
 
 export default function MainLayout() {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, refreshUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Close mobile menu when route changes
+  // Sync user data on mount and close mobile menu on route change
+  useEffect(() => {
+    refreshUser();
+  }, []);
+
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);

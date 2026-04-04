@@ -4,6 +4,12 @@ import { Link } from 'react-router-dom';
 import { Verified, Play, Plus, Trash2 } from 'lucide-react';
 
 export default function Profile() {
+  // Compression helper
+  const optimizeImage = (url) => {
+    if (!url || !url.includes('cloudinary.com')) return url;
+    return url.replace('/upload/', '/upload/q_auto,f_auto,w_600/');
+  };
+
   const { token, user } = useContext(AuthContext);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,17 +59,23 @@ export default function Profile() {
           {/* Avatar */}
           <div className="relative">
              <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-teal-500 flex items-end justify-center overflow-hidden border-4 border-[#0d0914] shadow-[0_0_40px_rgba(20,184,166,0.3)]">
-                <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${user.username}&backgroundColor=transparent`} alt="avatar" className="w-[85%] h-[85%] object-cover object-bottom" />
+                <img 
+                  src={user.avatarUrl || `https://api.dicebear.com/7.x/notionists/svg?seed=${user.username}&backgroundColor=transparent`} 
+                  alt="avatar" 
+                  className="w-full h-full object-cover" 
+                />
              </div>
-             <div className="absolute -bottom-2 -right-2 bg-purple-500 rounded-xl p-2 border-4 border-[#0d0914] shadow-lg">
-                <Verified size={20} className="text-white" fill="currentColor" />
+             <div className={`absolute -bottom-2 -right-2 ${user.role === 'admin' ? 'bg-amber-400' : 'bg-purple-500'} rounded-xl p-2 border-4 border-[#0d0914] shadow-lg`}>
+                <Verified size={20} className={user.role === 'admin' ? 'text-black' : 'text-white'} fill="currentColor" />
              </div>
           </div>
 
           <div className="flex-1 text-center md:text-left mt-4 md:mt-0">
              <div className="flex flex-col md:flex-row md:items-center gap-4 mb-3">
                 <h1 className="text-4xl font-black text-white tracking-tight">@{user.username}</h1>
-                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap w-max mx-auto md:mx-0">Level 15 Curator</span>
+                <span className={`px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold ${user.role === 'admin' ? 'text-amber-400' : 'text-gray-400'} uppercase tracking-widest whitespace-nowrap w-max mx-auto md:mx-0`}>
+                  {user.role === 'admin' ? '👑 CROWN ADMIN' : 'Level 15 Curator'}
+                </span>
              </div>
              <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-6">
                 Digital art connoisseur and master of the Neon Gallery. Defining the future of desktop aesthetics one battle at a time.
@@ -112,7 +124,7 @@ export default function Profile() {
        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {wallpapers.map((wp, index) => (
              <div key={wp._id} className="group relative rounded-3xl overflow-hidden bg-black/40 aspect-video shadow-xl cursor-pointer border border-white/5 hover:border-purple-500/50 transition">
-                <img src={wp.url} alt="wallpaper" className="w-full h-full object-cover transition duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100" />
+                <img src={optimizeImage(wp.url)} alt="wallpaper" className="w-full h-full object-cover transition duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
                 
                 <div className="absolute top-4 left-4">

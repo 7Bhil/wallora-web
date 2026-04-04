@@ -20,8 +20,25 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+  const refreshUser = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch('http://localhost:3000/api/users/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const updatedUser = { ...user, ...data.user };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+    } catch (e) {
+      console.error('Refresh failed:', e);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={{ token, user, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

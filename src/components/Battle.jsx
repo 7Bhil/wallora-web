@@ -4,7 +4,13 @@ import { Swords } from 'lucide-react';
 export default function Battle() {
   const [wallpapers, setWallpapers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [voted, setVoted] = useState(null); // track which side was voted
+  const [voted, setVoted] = useState(null);
+
+  // Compression helper
+  const optimizeImage = (url) => {
+    if (!url || !url.includes('cloudinary.com')) return url;
+    return url.replace('/upload/', '/upload/q_auto,f_auto,w_1200/');
+  }; 
 
   const fetchWallpapers = async () => {
     setLoading(true);
@@ -99,7 +105,7 @@ export default function Battle() {
           className={`flex-1 relative cursor-pointer overflow-hidden rounded-3xl group transition-all duration-500 ${voted === 'left' ? 'opacity-30 scale-95' : voted === 'right' ? 'ring-4 ring-purple-400 ring-offset-4 ring-offset-[#0d0914]' : 'hover:ring-2 hover:ring-white/20'} md:ml-3`}
           onClick={() => handleVote(wallpapers[1]._id, wallpapers[0]._id, 'right')}
         >
-          <img src={wallpapers[1].url} alt="challenger 2" className="w-full h-full object-cover transition duration-700 group-hover:scale-105" />
+          <img src={optimizeImage(wallpapers[1].url)} alt="challenger 2" className="w-full h-full object-cover transition duration-700 group-hover:scale-105" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
           <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${voted === 'right' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
             <div className="bg-purple-500/80 backdrop-blur-md rounded-full px-8 py-4 border border-purple-300/50">
