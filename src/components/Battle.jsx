@@ -11,7 +11,9 @@ export default function Battle() {
     if (!url || !url.includes('cloudinary.com')) return url;
     return url.replace('/upload/', '/upload/q_auto,f_auto,w_1200/');
   }; 
-
+  const fetchWallpapers = async () => {
+    setLoading(true);
+    setVoted(null);
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'https://wallora-server.onrender.com';
       const res = await fetch(`${API_URL}/api/wallpapers/battle`);

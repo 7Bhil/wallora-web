@@ -18,7 +18,8 @@ export default function Profile() {
   const deleteWallpaper = async (id) => {
     if (!window.confirm('Supprimer ce wallpaper définitivement ?')) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/wallpapers/${id}`, {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://wallora-server.onrender.com';
+      const res = await fetch(`${API_URL}/api/wallpapers/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -34,7 +35,8 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/users/profile', {
+    const API_URL = import.meta.env.VITE_API_URL || 'https://wallora-server.onrender.com';
+    fetch(`${API_URL}/api/users/profile`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(res => res.json())
