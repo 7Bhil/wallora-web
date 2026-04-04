@@ -48,18 +48,68 @@ export default function Battle() {
     <div className="flex-1 h-full flex items-center justify-center">
       <div className="text-center">
         <Swords size={40} className="text-purple-400 mx-auto mb-4 animate-pulse" />
-        <p className="text-gray-400 font-medium">Preparing the Arena...</p>
+        <p className="text-gray-400 font-medium tracking-widest uppercase text-[10px]">Preparing the Arena...</p>
       </div>
     </div>
   );
 
   if (wallpapers.length < 2) return (
     <div className="flex-1 h-full flex items-center justify-center p-8">
-      <div className="text-center bg-white/[0.02] border border-white/5 rounded-3xl p-12 max-w-md">
-        <Swords size={48} className="text-gray-600 mx-auto mb-6" />
-        <h3 className="text-xl font-bold text-white mb-3">Arena is Empty</h3>
-        <p className="text-gray-400 text-sm">You need at least 2 wallpapers to start a battle. Upload some first in the Vault.</p>
+      <div className="text-center bg-white/[0.02] border border-white/5 rounded-[40px] p-16 max-w-md shadow-2xl">
+        <Swords size={48} className="text-gray-800 mx-auto mb-6" />
+        <h3 className="text-2xl font-black text-white mb-3 uppercase tracking-tight">Arena is Empty</h3>
+        <p className="text-gray-500 text-sm font-medium leading-relaxed">
+          The battle cannot begin without challengers. Upload at least 2 masterpieces to start the competition.
+        </p>
       </div>
+    </div>
+  );
+
+  const renderCard = (w, side) => (
+    <div
+      className={`flex-1 relative cursor-pointer overflow-hidden rounded-3xl group transition-all duration-500 
+        ${voted && voted !== side ? 'opacity-30 scale-95' : voted === side ? 'ring-4 ring-purple-500 shadow-[0_0_50px_rgba(168,85,247,0.3)]' : 'hover:ring-2 hover:ring-white/20'} 
+        ${side === 'left' ? 'md:mr-3' : 'md:ml-3'}
+        ${voted ? '' : 'hover:scale-[1.01]'}`}
+      onClick={() => handleVote(w._id, side === 'left' ? wallpapers[1]._id : wallpapers[0]._id, side)}
+    >
+      {/* Blurred Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-30"
+          style={{ backgroundImage: `url(${optimizeImage(w.url)})` }}
+        ></div>
+        <img 
+          src={optimizeImage(w.url)} 
+          alt="Wallpaper" 
+          className="w-full h-full object-contain relative z-10"
+        />
+      </div>
+      
+      {/* Overlay Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-20 pointer-events-none"></div>
+
+      <div className="absolute bottom-6 left-6 z-30">
+        <span className="bg-white/10 backdrop-blur-md border border-white/10 px-3 py-1 text-[10px] font-black text-white/70 uppercase tracking-widest rounded-full mb-2 inline-block">
+          ELO {w.eloScore}
+        </span>
+      </div>
+
+      {!voted && (
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-40 bg-purple-500/10">
+          <div className="bg-white/90 backdrop-blur-sm text-[#0d0914] px-6 py-2.5 rounded-full font-black text-sm tracking-widest uppercase shadow-2xl">
+            VOTE
+          </div>
+        </div>
+      )}
+
+      {voted === side && (
+        <div className="absolute inset-0 flex items-center justify-center z-50 bg-purple-500/20 backdrop-blur-[1px]">
+          <div className="bg-white text-purple-600 rounded-full p-4 shadow-[0_0_40px_rgba(168,85,247,0.5)] transform scale-125 animate-bounce">
+            <Swords size={32} />
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -74,23 +124,8 @@ export default function Battle() {
       </div>
 
       {/* Battle Cards — take all remaining height */}
-      <div className="flex-1 flex flex-col md:flex-row gap-0 min-h-0 px-8 pb-8">
-        {/* LEFT */}
-        <div
-          className={`flex-1 relative cursor-pointer overflow-hidden rounded-3xl group transition-all duration-500 ${voted === 'right' ? 'opacity-30 scale-95' : voted === 'left' ? 'ring-4 ring-purple-400 ring-offset-4 ring-offset-[#0d0914]' : 'hover:ring-2 hover:ring-white/20'} md:mr-3`}
-          onClick={() => handleVote(wallpapers[0]._id, wallpapers[1]._id, 'left')}
-        >
-          <img src={wallpapers[0].url} alt="challenger 1" className="w-full h-full object-cover transition duration-700 group-hover:scale-105" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
-          <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${voted === 'left' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-            <div className="bg-purple-500/80 backdrop-blur-md rounded-full px-8 py-4 border border-purple-300/50">
-              <span className="text-white font-black text-2xl tracking-widest">VOTE</span>
-            </div>
-          </div>
-          <div className="absolute bottom-6 left-6">
-            <span className="block text-white font-black text-xl drop-shadow-lg">ELO {wallpapers[0].eloScore}</span>
-          </div>
-        </div>
+      <div className="flex-1 flex flex-col md:flex-row gap-4 md:gap-0 min-h-0 px-8 pb-8">
+        {renderCard(wallpapers[0], 'left')}
 
         {/* VS Divider */}
         <div className="flex md:flex-col items-center justify-center z-10 px-2 md:px-0 md:py-4 gap-4 md:gap-0">
@@ -101,22 +136,7 @@ export default function Battle() {
           <div className="hidden md:block h-full w-px bg-white/5"></div>
         </div>
 
-        {/* RIGHT */}
-        <div
-          className={`flex-1 relative cursor-pointer overflow-hidden rounded-3xl group transition-all duration-500 ${voted === 'left' ? 'opacity-30 scale-95' : voted === 'right' ? 'ring-4 ring-purple-400 ring-offset-4 ring-offset-[#0d0914]' : 'hover:ring-2 hover:ring-white/20'} md:ml-3`}
-          onClick={() => handleVote(wallpapers[1]._id, wallpapers[0]._id, 'right')}
-        >
-          <img src={optimizeImage(wallpapers[1].url)} alt="challenger 2" className="w-full h-full object-cover transition duration-700 group-hover:scale-105" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
-          <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${voted === 'right' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-            <div className="bg-purple-500/80 backdrop-blur-md rounded-full px-8 py-4 border border-purple-300/50">
-              <span className="text-white font-black text-2xl tracking-widest">VOTE</span>
-            </div>
-          </div>
-          <div className="absolute bottom-6 left-6">
-            <span className="block text-white font-black text-xl drop-shadow-lg">ELO {wallpapers[1].eloScore}</span>
-          </div>
-        </div>
+        {renderCard(wallpapers[1], 'right')}
       </div>
     </div>
   );
