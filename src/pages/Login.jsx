@@ -14,8 +14,9 @@ export default function Login() {
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://wallora-server.onrender.com';
       try {
-        const res = await fetch('http://localhost:3000/api/auth/google', {
+        const res = await fetch(`${API_URL}/api/auth/google`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ idToken: tokenResponse.access_token }) // Note: for @react-oauth/google, use access_token or fetch id_token
@@ -37,7 +38,8 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:3000/api/auth/login', {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://wallora-server.onrender.com';
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

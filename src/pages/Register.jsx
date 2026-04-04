@@ -16,8 +16,9 @@ export default function Register() {
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://wallora-server.onrender.com';
       try {
-        const res = await fetch('http://localhost:3000/api/auth/google', {
+        const res = await fetch(`${API_URL}/api/auth/google`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ idToken: tokenResponse.access_token })
@@ -41,7 +42,8 @@ export default function Register() {
     if (password !== confirmPassword) return setError('Les mots de passe ne correspondent pas.');
     
     try {
-      const res = await fetch('http://localhost:3000/api/auth/register', {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://wallora-server.onrender.com';
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password })

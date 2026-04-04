@@ -23,7 +23,8 @@ export const AuthProvider = ({ children }) => {
   const refreshUser = async () => {
     if (!token) return;
     try {
-      const res = await fetch('http://localhost:3000/api/users/profile', {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://wallora-server.onrender.com';
+      const res = await fetch(`${API_URL}/api/users/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
