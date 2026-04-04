@@ -12,9 +12,10 @@ export default function Leaderboard() {
   useEffect(() => {
     const fetch_ = async () => {
       try {
+        const API_URL = import.meta.env.VITE_API_URL || 'https://wallora-server.onrender.com';
         const [resImages, resUsers] = await Promise.all([
-          fetch('http://localhost:3000/api/wallpapers/leaderboard'),
-          fetch('http://localhost:3000/api/users/leaderboard')
+          fetch(`${API_URL}/api/wallpapers/leaderboard`),
+          fetch(`${API_URL}/api/users/leaderboard`)
         ]);
         
         if (resImages.ok) setImageLeaderboard(await resImages.json());

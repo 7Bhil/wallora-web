@@ -12,11 +12,9 @@ export default function Battle() {
     return url.replace('/upload/', '/upload/q_auto,f_auto,w_1200/');
   }; 
 
-  const fetchWallpapers = async () => {
-    setLoading(true);
-    setVoted(null);
     try {
-      const res = await fetch('http://localhost:3000/api/wallpapers/battle');
+      const API_URL = import.meta.env.VITE_API_URL || 'https://wallora-server.onrender.com';
+      const res = await fetch(`${API_URL}/api/wallpapers/battle`);
       if (res.ok) setWallpapers(await res.json());
       else setWallpapers([]);
     } catch (e) {
@@ -31,7 +29,8 @@ export default function Battle() {
     if (voted) return;
     setVoted(side);
     try {
-      await fetch('http://localhost:3000/api/wallpapers/vote', {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://wallora-server.onrender.com';
+      await fetch(`${API_URL}/api/wallpapers/vote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ winnerId, loserId })

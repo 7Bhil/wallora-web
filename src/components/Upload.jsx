@@ -51,7 +51,8 @@ export default function Upload() {
     formData.append('image', file);
 
     try {
-      const res = await fetch('http://localhost:3000/api/wallpapers/upload', {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://wallora-server.onrender.com';
+      const res = await fetch(`${API_URL}/api/wallpapers/upload`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData,
