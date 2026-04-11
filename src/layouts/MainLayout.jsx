@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Swords, LayoutGrid, Trophy, Palette, Sparkles, HelpCircle, LogOut, Menu, X } from 'lucide-react';
+import { Swords, LayoutGrid, Trophy, Palette, Sparkles, HelpCircle, LogOut, Menu, X, Smartphone } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
 export default function MainLayout() {
@@ -8,6 +8,24 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isInstallable, setIsInstallable] = useState(!!window.deferredPWAInstallPrompt);
+
+  useEffect(() => {
+    const handleInstallable = () => setIsInstallable(true);
+    window.addEventListener('pwa-installable', handleInstallable);
+    return () => window.removeEventListener('pwa-installable', handleInstallable);
+  }, []);
+
+  const handleInstallPWA = async () => {
+    if (window.deferredPWAInstallPrompt) {
+      window.deferredPWAInstallPrompt.prompt();
+      const { outcome } = await window.deferredPWAInstallPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setIsInstallable(false);
+        window.deferredPWAInstallPrompt = null;
+      }
+    }
+  };
 
   // Sync user data on mount and close mobile menu on route change
   useEffect(() => {
@@ -89,6 +107,14 @@ export default function MainLayout() {
              <HelpCircle size={20} />
              <span className="font-semibold text-sm">Support</span>
            </Link>
+
+           {isInstallable && user && (
+             <button onClick={handleInstallPWA} className="flex items-center gap-4 px-4 py-2 mt-4 text-emerald-400 bg-emerald-400/10 hover:bg-emerald-400/20 rounded-xl transition w-full text-left">
+               <Smartphone size={20} />
+               <span className="font-semibold text-sm">Install Mobile App</span>
+             </button>
+           )}
+
            {user ? (
              <button onClick={handleLogout} className="flex items-center gap-4 px-4 text-gray-500 hover:text-gray-300 transition w-full text-left">
                <LogOut size={20} />
